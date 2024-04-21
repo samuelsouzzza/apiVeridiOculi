@@ -1,0 +1,19 @@
+###
+# POST /users
+###
+POST http://localhost:3333/users
+Content-Type: application/json
+
+{
+    "id_user": 1,
+    "complete_name_user": "John Doe",
+    "email_user": "john@example.com",
+    "cpf_user": 52928508880,
+    "password_user": "441133",
+    "premium_user": false
+}
+
+###
+# GET /users 
+###
+GET http://localhost:3333/users
