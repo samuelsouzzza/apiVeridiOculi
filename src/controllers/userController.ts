@@ -19,10 +19,12 @@ export const createUser = async (req: Request, res: Response) => {
       premium_user,
     });
 
-    res.json(newUser);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Não foi possível criar o usuário' });
+    if (!newUser) throw new Error('Não foi possível criar o usuário!');
+
+    res.status(200).json({ ok: true, message: 'Usuário criado com sucesso!' });
+  } catch (err) {
+    if (err instanceof Error)
+      res.status(500).json({ ok: false, message: err.message });
   }
 };
 

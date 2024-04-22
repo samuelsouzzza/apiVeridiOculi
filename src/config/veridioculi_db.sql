@@ -1,3 +1,5 @@
+CREATE DATABASE veridioculi_db;
+USE veridioculi_db;
 CREATE TABLE users (
 	id_user INT(11) AUTO_INCREMENT PRIMARY KEY NOT NULL UNIQUE,
 	complete_name_user VARCHAR(255) NOT NULL,
