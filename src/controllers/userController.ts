@@ -11,6 +11,15 @@ export const createUser = async (req: Request, res: Response) => {
       premium_user,
     } = req.body;
 
+    if (!complete_name_user || !email_user || !cpf_user || !password_user)
+      throw new Error(
+        `O(s) campo(s) ${!complete_name_user ? '"Nome completo"' : ''} ${
+          !email_user ? '"E-Mail"' : ''
+        } ${!cpf_user ? '"CPF"' : ''} ${
+          !password_user ? '"Senha"/"Confirmar senha"' : ''
+        } não pode(m) estar vazio(s).`
+      );
+
     const newUser = await User.create({
       complete_name_user,
       email_user,
