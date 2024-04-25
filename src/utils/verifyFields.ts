@@ -18,7 +18,7 @@ function replaceField(fieldnames: string) {
     case 'email_user':
       return 'E-Mail';
     case 'password_user':
-      return 'Senha';
+      return 'Nova senha';
     case 'confirm_password_user':
       return 'Confirmar senha';
   }

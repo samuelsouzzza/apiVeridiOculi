@@ -6,11 +6,11 @@ Content-Type: application/json
 
 {
     # "id_user": 1,
-    "complete_name_user": "",
-    "cpf_user": "sdf",
-    "email_user": "",
+    "complete_name_user": "sdfasdf",
+    "cpf_user": "sdf111asaasdsadfasdffasdfdfsdfasdf111",
+    "email_user": "asdf111asdfaasdfasdf1asdf111asdfasdf",
     "password_user": "441133",
-    "confirm_password_user": "",
+    "confirm_password_user": "sdfasdf",
     "premium_user": false
 }
 
