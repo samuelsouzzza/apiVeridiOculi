@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import User from '../models/userModel';
+import { verifyNullFields, verifyRepeatFields } from '../utils/verifyFields';
 
 export const createUser = async (req: Request, res: Response) => {
   try {
@@ -8,16 +9,31 @@ export const createUser = async (req: Request, res: Response) => {
       email_user,
       cpf_user,
       password_user,
+      confirm_password_user,
       premium_user,
     } = req.body;
 
-    if (!complete_name_user || !email_user || !cpf_user || !password_user)
+    const nullFields = verifyNullFields([
+      complete_name_user,
+      cpf_user,
+      email_user,
+      password_user,
+      confirm_password_user,
+    ]);
+
+    if (nullFields)
       throw new Error(
-        `O(s) campo(s) ${!complete_name_user ? '"Nome completo"' : ''} ${
-          !email_user ? '"E-Mail"' : ''
-        } ${!cpf_user ? '"CPF"' : ''} ${
-          !password_user ? '"Senha"/"Confirmar senha"' : ''
-        } não pode(m) estar vazio(s).`
+        `O(s) seguinte(s) campo(s) está(ão) vazios(s): ${nullFields}`
+      );
+
+    const repeatFields = await verifyRepeatFields(
+      [cpf_user, email_user],
+      ['cpf_user', 'email_user']
+    );
+
+    if (repeatFields)
+      throw new Error(
+        `O(s) seguinte(s) campo(s) já está(ão) cadastrado(s): ${repeatFields}`
       );
 
     const newUser = await User.create({

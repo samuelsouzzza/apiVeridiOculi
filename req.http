@@ -5,11 +5,12 @@ POST http://localhost:3333/users
 Content-Type: application/json
 
 {
-    "id_user": 1,
-    "complete_name_user": "John Doe",
-    "email_user": "john@example.com",
-    "cpf_user": 52928508880,
+    # "id_user": 1,
+    "complete_name_user": "",
+    "cpf_user": "sdf",
+    "email_user": "",
     "password_user": "441133",
+    "confirm_password_user": "",
     "premium_user": false
 }
 
