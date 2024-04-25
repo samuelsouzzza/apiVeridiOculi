@@ -10,7 +10,6 @@ export const createUser = async (req: Request, res: Response) => {
       email_user,
       cpf_user,
       password_user,
-      confirm_password_user,
       premium_user,
     } = req.body;
 
@@ -19,7 +18,6 @@ export const createUser = async (req: Request, res: Response) => {
       cpf_user,
       email_user,
       password_user,
-      confirm_password_user,
     ]);
 
     if (nullFields)
@@ -37,14 +35,11 @@ export const createUser = async (req: Request, res: Response) => {
         `O(s) seguinte(s) campo(s) já está(ão) cadastrado(s): ${repeatFields}`
       );
 
-    if (password_user !== confirm_password_user)
-      throw new Error(`As senhas não podem ser diferentes`);
-
     const newUser = await User.create({
       complete_name_user,
       email_user,
       cpf_user,
-      password_user: hashPassword(confirm_password_user),
+      password_user,
       premium_user,
     });
 
