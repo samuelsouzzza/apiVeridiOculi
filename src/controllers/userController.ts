@@ -63,3 +63,16 @@ export const getAllUsers = async (req: Request, res: Response) => {
       .json({ error: 'Não foi possível buscar os usuários' });
   }
 };
+
+export const authUser = async (req: Request, res: Response) => {
+  const { email_user, password_user } = req.body;
+
+  const foundUser = await User.findOne({
+    where: { email_user: email_user },
+  });
+
+  if (!foundUser)
+    res.status(404).json({ ok: false, message: 'Usuário não encontrado.' });
+
+  res.status(200).json({ ok: true, message: 'Encontramos o perfil' });
+};
