@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import User from '../models/userModel';
 import { verifyNullFields, verifyRepeatFields } from '../utils/verifyFields';
-import { hashPassword } from '../utils/hashPassword';
+import bcrypt from 'bcrypt';
 
 export const createUser = async (req: Request, res: Response) => {
   try {
@@ -45,10 +45,12 @@ export const createUser = async (req: Request, res: Response) => {
 
     if (!newUser) throw new Error('Não foi possível criar o usuário!');
 
-    res.status(200).json({ ok: true, message: 'Usuário criado com sucesso!' });
+    return res
+      .status(200)
+      .json({ ok: true, message: 'Usuário criado com sucesso!' });
   } catch (err) {
     if (err instanceof Error)
-      res.status(500).json({ ok: false, message: err.message });
+      return res.status(500).json({ ok: false, message: err.message });
   }
 };
 
@@ -57,7 +59,6 @@ export const getAllUsers = async (req: Request, res: Response) => {
     const users = await User.findAll();
     return res.json(users);
   } catch (error) {
-    console.error(error);
     return res
       .status(500)
       .json({ error: 'Não foi possível buscar os usuários' });
@@ -65,14 +66,21 @@ export const getAllUsers = async (req: Request, res: Response) => {
 };
 
 export const authUser = async (req: Request, res: Response) => {
-  const { email_user, password_user } = req.body;
+  try {
+    const { email_user, password_user } = req.body;
 
-  const foundUser = await User.findOne({
-    where: { email_user: email_user },
-  });
+    const foundUser = await User.findOne({
+      where: { email_user: email_user },
+    });
+    if (!foundUser) throw new Error('Usuário não encontrado');
 
-  if (!foundUser)
-    res.status(404).json({ ok: false, message: 'Usuário não encontrado.' });
+    const dbPasswordUser = foundUser?.getDataValue('password_user') as string;
+    const passwordCompare = await bcrypt.compare(password_user, dbPasswordUser);
+    if (!passwordCompare) throw new Error('A senha está incorreta!');
+  } catch (err) {
+    if (err instanceof Error)
+      return res.status(500).json({ ok: false, message: err.message });
+  }
 
-  res.status(200).json({ ok: true, message: 'Encontramos o perfil' });
+  return res.status(200).json({ ok: true, message: 'Encontramos o perfil' });
 };
