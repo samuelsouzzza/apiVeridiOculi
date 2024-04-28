@@ -81,7 +81,7 @@ export const authUser = async (req: Request, res: Response) => {
     const passwordCompare = await bcrypt.compare(password_user, dbPasswordUser);
     if (!passwordCompare) throw new Error('A senha está incorreta!');
 
-    const token = jwt.sign(dbIdUser, API_KEY);
+    const token = jwt.sign({ dbIdUser }, API_KEY, { expiresIn: '2h' });
 
     return res
       .status(200)
