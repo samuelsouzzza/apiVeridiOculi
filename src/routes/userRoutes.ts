@@ -5,10 +5,10 @@ import {
   getAllUsers,
 } from '../controllers/userController';
 
-const router = Router();
+const userRouter = Router();
 
-router.post('/users', createUser);
-router.get('/users', getAllUsers);
-router.post('/auth', authUser);
+userRouter.post('/users', createUser);
+userRouter.get('/users', getAllUsers);
+userRouter.post('/auth', authUser);
 
-export default router;
+export default userRouter;

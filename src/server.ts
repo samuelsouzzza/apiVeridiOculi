@@ -2,6 +2,7 @@ import express from 'express';
 import userRoutes from './routes/userRoutes';
 import cors from 'cors';
 import { testConnection } from './config/database';
+import analysisRouter from './routes/analysisRoutes';
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(
 );
 app.use(express.json());
 app.use(userRoutes);
+app.use(analysisRouter);
 
 app.get('/', (req, res) => {
   const response = { message: 'Bem-vindo à API da Veridi Oculi!' };
