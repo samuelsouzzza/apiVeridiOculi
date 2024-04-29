@@ -1,13 +1,16 @@
 import multer from 'multer';
+import fs from 'fs';
 
 const storage = multer.diskStorage({
-  //   destination: (req, file, cb) => {
-  //     const id = req.body.id_user;
-  //     cb(null, `uploads-analysis/${id}`);
-  //   },
-  //   filename: (req, file, cb) => {
-  //     cb(null, file.filename);
-  //   },
+  destination: (req, file, cb) => {
+    const dir = `uploads-analysis/tmp`;
+
+    fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
 });
 
 export const upload = multer({ storage });

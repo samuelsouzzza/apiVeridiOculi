@@ -10,7 +10,7 @@ const analysisRouter = Router();
 analysisRouter.get('/analysis', getAllAnalysis);
 analysisRouter.post(
   '/upload-analysis',
-  upload.array('imgs_analysis'),
+  upload.array('imgs_analysis', 3),
   createAnalysis
 );
 
