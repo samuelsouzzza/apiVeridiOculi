@@ -11,7 +11,7 @@ CREATE TABLE users (
 
 CREATE TABLE analysis (
     id_analysis INT(11) AUTO_INCREMENT PRIMARY KEY NOT NULL UNIQUE,
-    species_name_analysis VARCHAR(100) NOT NULL,
+    target_species_name VARCHAR(100) NOT NULL,
     date_analysis VARCHAR(20) NOT NULL,
     status_analysis VARCHAR(50) NOT NULL,
     id_user INT(11), 

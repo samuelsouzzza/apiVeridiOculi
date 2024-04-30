@@ -4,6 +4,7 @@ import { verifyNullFields, verifyRepeatFields } from '../utils/verifyFields';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { API_KEY } from '../utils/generateAPIKey';
+import { IDbUser } from '../types/types';
 
 export const createUser = async (req: Request, res: Response) => {
   try {
@@ -75,17 +76,28 @@ export const authUser = async (req: Request, res: Response) => {
       where: { email_user: email_user },
     });
     if (!foundUser) throw new Error('Usuário não encontrado');
-    const dbIdUser = foundUser?.getDataValue('id_user');
-    const dbPasswordUser = foundUser?.getDataValue('password_user') as string;
 
-    const passwordCompare = await bcrypt.compare(password_user, dbPasswordUser);
+    const dbUser: IDbUser = foundUser.get();
+
+    const passwordCompare = await bcrypt.compare(
+      password_user,
+      dbUser.password_user
+    );
     if (!passwordCompare) throw new Error('A senha está incorreta!');
 
-    const token = jwt.sign({ dbIdUser }, API_KEY, { expiresIn: '2h' });
+    const token = jwt.sign({ id_user: dbUser.id_user }, API_KEY, {
+      expiresIn: '2h',
+    });
 
-    return res
-      .status(200)
-      .json({ ok: true, message: 'Encontramos o perfil', token });
+    return res.status(200).json({
+      ok: true,
+      message: 'Encontramos o perfil',
+      userLogged: {
+        complete_name_user: dbUser.complete_name_user,
+        premium_user: 0,
+      },
+      token,
+    });
   } catch (err) {
     if (err instanceof Error)
       return res.status(500).json({ ok: false, message: err.message });
