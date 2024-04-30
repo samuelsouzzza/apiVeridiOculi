@@ -9,8 +9,13 @@ CREATE TABLE users (
 	premium_user BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-INSERT INTO users (complete_name_user, email_user, cpf_user, password_user) VALUES 
-('Samuel Ribeiro de Souza', 'rssamuel17@gmail.com', '529228508880', '441133'),
-('Camila Trindade Tagami', 'camilatagami@gmail.com', '4567891234598', '123');
+CREATE TABLE analytics (
+    id_analysis INT(11) AUTO_INCREMENT PRIMARY KEY NOT NULL UNIQUE,
+    species_name_analysis VARCHAR(100) NOT NULL,
+    date_analysis VARCHAR(20) NOT NULL,
+    status_analysis VARCHAR(50) NOT NULL,
+    id_user INT(11), 
+    CONSTRAINT fk_id_user FOREIGN KEY (id_user) REFERENCES users(id_user) 
+);
 
 DELETE FROM users
