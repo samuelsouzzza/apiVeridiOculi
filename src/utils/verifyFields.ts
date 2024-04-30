@@ -1,4 +1,4 @@
-import User from '../models/userModel';
+import User from '../models/usersModel';
 
 const databaseFiels = [
   'complete_name_user',

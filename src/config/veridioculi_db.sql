@@ -9,7 +9,7 @@ CREATE TABLE users (
 	premium_user BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-CREATE TABLE analytics (
+CREATE TABLE analysis (
     id_analysis INT(11) AUTO_INCREMENT PRIMARY KEY NOT NULL UNIQUE,
     species_name_analysis VARCHAR(100) NOT NULL,
     date_analysis VARCHAR(20) NOT NULL,

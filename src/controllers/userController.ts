@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import User from '../models/userModel';
+import Users from '../models/usersModel';
 import { verifyNullFields, verifyRepeatFields } from '../utils/verifyFields';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -37,7 +37,7 @@ export const createUser = async (req: Request, res: Response) => {
         `O(s) seguinte(s) campo(s) já está(ão) cadastrado(s): ${repeatFields}`
       );
 
-    const newUser = await User.create({
+    const newUser = await Users.create({
       complete_name_user,
       email_user,
       cpf_user,
@@ -58,12 +58,12 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const users = await User.findAll();
-    return res.json(users);
+    const users = await Users.findAll();
+    return res.status(200).json(users);
   } catch (error) {
     return res
       .status(500)
-      .json({ error: 'Não foi possível buscar os usuários' });
+      .json({ error: 'Não foi possível buscar os usuários.' });
   }
 };
 
@@ -71,7 +71,7 @@ export const authUser = async (req: Request, res: Response) => {
   try {
     const { email_user, password_user } = req.body;
 
-    const foundUser = await User.findOne({
+    const foundUser = await Users.findOne({
       where: { email_user: email_user },
     });
     if (!foundUser) throw new Error('Usuário não encontrado');
