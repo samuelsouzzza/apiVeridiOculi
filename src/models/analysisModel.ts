@@ -9,7 +9,7 @@ const Analysis = sequelize.define(
       autoIncrement: true,
       primaryKey: true,
     },
-    target_species_name: {
+    target_species_name_analysis: {
       type: DataTypes.STRING,
       allowNull: false,
     },

@@ -86,7 +86,7 @@ export const authUser = async (req: Request, res: Response) => {
     if (!passwordCompare) throw new Error('A senha está incorreta!');
 
     const token = jwt.sign({ id_user: dbUser.id_user }, API_KEY, {
-      expiresIn: '5d',
+      expiresIn: '1d',
     });
 
     return res.status(200).json({
