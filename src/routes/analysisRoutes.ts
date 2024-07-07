@@ -7,7 +7,8 @@ import { upload } from '../utils/upload';
 
 const analysisRouter = Router();
 
-analysisRouter.get('/analysis', getAllAnalysis);
+
+analysisRouter.get('/analysis/:id', getAllAnalysis);
 analysisRouter.post(
   '/upload-analysis',
   upload.array('imgs_analysis', 3),

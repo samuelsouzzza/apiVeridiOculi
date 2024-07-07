@@ -6,12 +6,25 @@ import { API_KEY } from '../utils/generateAPIKey';
 
 export const getAllAnalysis = async (req: Request, res: Response) => {
   try {
-    const analysis = await Analysis.findAll();
-    return res.status(200).json(analysis);
-  } catch {
+    const { id } = req.params;
+
+    const decodedToken = jwt.verify(id, API_KEY) as {
+      id_user: number;
+    };
+
+    if (!decodedToken)
+      throw new Error('Sessão expirada, faça login novamente.');
+
+    const analysis = await Analysis.findAll({
+      where: { id_user: decodedToken.id_user },
+    });
+
     return res
-      .status(500)
-      .json({ ok: false, message: 'Não foi possível buscar as análises.' });
+      .status(200)
+      .json({ ok: true, message: 'Análises encontradas.', data: analysis });
+  } catch (err) {
+    if (err instanceof Error)
+      return res.status(500).json({ ok: false, message: err.message });
   }
 };
 
@@ -24,7 +37,9 @@ export const createAnalysis = async (req: Request, res: Response) => {
 
     const TOKEN = req.headers.authorization?.toString().split(' ')[1];
 
-    const decodedToken = jwt.verify(TOKEN, API_KEY) as { id_user: number };
+    const decodedToken = jwt.verify(TOKEN, API_KEY) as {
+      id_user: number;
+    };
     if (!decodedToken)
       throw new Error('Sessão expirada, faça login novamente.');
 
@@ -52,8 +67,8 @@ export const createAnalysis = async (req: Request, res: Response) => {
       (req.files as Express.Multer.File[]).map((file: Express.Multer.File) => {
         try {
           const newImage = Images.create({
-            original_path_image: file.path,
-            ia_path_image: file.path,
+            original_path_image: file.path.replace('\\', '/'),
+            ia_path_image: file.path.replace('\\', '/'),
             species_name_image: newAnalysis.getDataValue(
               'target_species_name_analysis'
             ),

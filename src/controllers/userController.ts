@@ -3,8 +3,8 @@ import Users from '../models/usersModel';
 import { verifyNullFields, verifyRepeatFields } from '../utils/verifyFields';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { API_KEY } from '../utils/generateAPIKey';
 import { IDbUser } from '../types/types';
+import { API_KEY } from '../utils/generateAPIKey';
 
 export const createUser = async (req: Request, res: Response) => {
   try {

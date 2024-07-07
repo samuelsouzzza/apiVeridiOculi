@@ -27,5 +27,3 @@ CREATE TABLE images (
 	id_analysis INT(11),
 	CONSTRAINT fk_id_analysis FOREIGN KEY (id_analysis) REFERENCES analysis(id_analysis)
 );
-
-DELETE FROM users
