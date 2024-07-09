@@ -3,6 +3,7 @@ import Analysis from '../models/analysisModel';
 import Images from '../models/imagesModel';
 import jwt from 'jsonwebtoken';
 import { API_KEY } from '../utils/generateAPIKey';
+import { uploadGoogleStorage } from '../utils/uploadGoogleStorage';
 
 export const getAllAnalysis = async (req: Request, res: Response) => {
   try {
@@ -64,30 +65,60 @@ export const createAnalysis = async (req: Request, res: Response) => {
       );
 
     if (req.files) {
-      (req.files as Express.Multer.File[]).map((file: Express.Multer.File) => {
-        try {
-          const newImage = Images.create({
-            original_path_image: file.path.replace('\\', '/'),
-            ia_path_image: file.path.replace('\\', '/'),
-            species_name_image: newAnalysis.getDataValue(
-              'target_species_name_analysis'
-            ),
-            accuracy_image: Math.random().toFixed(2),
-            id_analysis: newAnalysis.getDataValue('id_analysis'),
-          });
+      const uploadErrors: string[] = [];
+      const fileUploads = await Promise.all(
+        (req.files as Express.Multer.File[]).map(
+          async (file: Express.Multer.File) => {
+            try {
+              const publicUrl = await uploadGoogleStorage(file);
+              if (!publicUrl) throw new Error('Falha no upload do arquivo');
 
-          if (!newImage)
-            throw new Error('Não foi possível analisar as imagens.');
-        } catch (err: unknown) {
-          if (err instanceof Error)
-            return res.status(500).json({ ok: false, message: err.message });
-        }
-      });
+              const newImage = await Images.create({
+                original_path_image: file.path.replace('\\', '/'),
+                ia_path_image: publicUrl,
+                species_name_image: newAnalysis.getDataValue(
+                  'target_species_name_analysis'
+                ),
+                accuracy_image: Math.random().toFixed(2),
+                id_analysis: newAnalysis.getDataValue('id_analysis'),
+              });
+
+              if (!newImage)
+                throw new Error('Não foi possível analisar as imagens.');
+
+              return publicUrl;
+            } catch (err) {
+              if (err instanceof Error) {
+                console.error('Erro ao processar o arquivo:', err.message);
+                uploadErrors.push(
+                  `Erro ao processar o arquivo ${file.originalname}: ${err.message}`
+                );
+                return null;
+              }
+            }
+          }
+        )
+      );
+      const successfulUploads = fileUploads.filter((url) => url !== null);
+
+      if (uploadErrors.length > 0) {
+        console.log('ERROS ', uploadErrors);
+        console.log('URLS geradas ', successfulUploads);
+
+        return res.status(500).json({
+          ok: false,
+          message: `Erros em ${
+            uploadErrors.length + 1
+          } arquivo(s). Acesse o console para mais detalhes.`,
+        });
+      } else {
+        return res
+          .status(200)
+          .json({ ok: true, message: 'Arquivos enviados para a análise.' });
+      }
+    } else {
+      return res.status(400).send('No files uploaded');
     }
-
-    if (!newAnalysis) throw new Error('Não foi possível fazer a análise.');
-
-    return res.status(200).json({ ok: true, message: 'Análise enviada!' });
   } catch (err: unknown) {
     if (err instanceof Error)
       return res.status(500).json({ ok: false, message: err.message });
